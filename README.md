@@ -1,18 +1,24 @@
 [![CI](https://github.com/scm-rs/cyclonedx-rs/actions/workflows/ci.yaml/badge.svg)](https://github.com/scm-rs/cyclonedx-rs/actions/workflows/ci.yaml)
 
-# cyclonedx-rs — unpublished preparation fork
+# cyclonedx-rs
 
-Standalone extraction of **Paul Sastrasinh's
-[serde-cyclonedx](https://github.com/psastras/sbom-rs)**, retaining its generated
-Serde models and builders. This is a fallback fork, not an official handover.
-An upstream release remains the preferred production route. This repository
-is available for review; no crate has been published. The
-[documentation URL](https://docs.rs/cyclonedx-rs) is a planned location and will
-become available only after an approved publication.
+Serde-compatible Rust models and builders for reading and writing CycloneDX
+Software Bills of Materials (SBOMs), supporting specification versions 1.4–1.7.
 
-`publish = false` is intentional. **0.10.1 is only an unpublished working
-version**, not an approved first release. Rust **1.91.0** is the compatibility
-baseline; CI checks that version and stable. See [PROVENANCE.md](PROVENANCE.md).
+A standalone fork of **Paul Sastrasinh's
+[serde-cyclonedx](https://github.com/psastras/sbom-rs)**, preserving its generated
+APIs and upstream attribution. See [PROVENANCE.md](PROVENANCE.md) for the
+extraction history.
+
+Minimum supported Rust version: **1.91.0**. CI also checks stable Rust.
+
+## Status
+
+**Unpublished; available for review.** Publishing remains disabled
+(`publish = false`), and **0.10.1 is a working version**, not an approved release.
+An upstream release remains the preferred production route. The
+[docs.rs location](https://docs.rs/cyclonedx-rs) is planned for a future approved
+publication; no documentation release is available there yet.
 
 ## Models and usage
 
