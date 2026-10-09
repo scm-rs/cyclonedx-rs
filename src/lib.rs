@@ -1,13 +1,17 @@
-#![doc(html_root_url = "https://docs.rs/serde-cyclonedx/0.10.1")]
+#![doc(html_root_url = "https://docs.rs/cyclonedx-rs/0.10.1")]
 #![allow(clippy::doc_lazy_continuation)]
 
-//! # serde-cyclonedx
+//! # cyclonedx-rs
+//!
+//! An unpublished standalone fork of Paul Sastrasinh's serde-cyclonedx.
+//! The working version and documentation URL do not imply a registry release.
 //!
 //! This crate provides a type safe [serde](https://serde.rs/) compatible
 //! [CycloneDx](https://cyclonedx.org/) format. It is intended for use
 //! in Rust code which may need to read or write CycloneDx files.
 //!
-//! The latest [documentation can be found here](https://docs.rs/serde_cyclonedx).
+//! The planned [documentation location](https://docs.rs/cyclonedx-rs) will
+//! become available only after an approved publication.
 //!
 //! serde is a popular serialization framework for Rust. More information can be
 //! found on the official repository:
@@ -31,7 +35,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use serde_cyclonedx::cyclonedx::v_1_4::CycloneDx;
+//! use cyclonedx_rs::cyclonedx::v_1_4::CycloneDx;
 //!
 //! let cyclonedx: CycloneDx = serde_json::from_str(r#"{
 //!   "bomFormat": "CycloneDX",
@@ -48,7 +52,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use serde_cyclonedx::cyclonedx::v_1_4::CycloneDxBuilder;
+//! use cyclonedx_rs::cyclonedx::v_1_4::CycloneDxBuilder;
 //!
 //! let cyclonedx = CycloneDxBuilder::default()
 //!   .bom_format("CycloneDX")
