@@ -19,6 +19,10 @@
 The explicit Serde derive dependency is preserved. Metadata, crate-local docs,
 independent lockfile/tests/CI, licensing notices and package-content checks are
 preparation changes only. No CLI, SPDX crate, or release workflow is included.
+The inherited `LICENSE -> ../LICENSE` workspace symlink was replaced with a
+regular file containing the complete, unchanged upstream MIT text so fresh
+standalone Git checkouts do not depend on a parent workspace license. Package
+verification also rejects license/notice symlinks.
 
 The library retains upstream author credit and history. It was initially
 cloned from a local extraction workspace; the review repository is now
