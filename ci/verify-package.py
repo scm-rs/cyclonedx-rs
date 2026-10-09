@@ -9,6 +9,11 @@ root = pathlib.Path(__file__).resolve().parents[1]
 manifest = tomllib.loads((root / "Cargo.toml").read_text())
 package = manifest["package"]
 assert package["publish"] is False, "preparation must remain unpublished"
+for license_file in ["LICENSE", "LICENSE-APACHE", "NOTICE"]:
+    path = root / license_file
+    assert path.is_file() and not path.is_symlink(), (
+        f"{license_file} must be a regular vendored file, not a workspace link"
+    )
 name = f'{package["name"]}-{package["version"]}'
 archive = root / "target" / "package" / f"{name}.crate"
 required = {"Cargo.toml", "Cargo.lock", "build.rs", "src/lib.rs",
