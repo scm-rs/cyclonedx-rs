@@ -3,15 +3,15 @@
 
 //! # cyclonedx-rs
 //!
-//! An unpublished standalone fork of Paul Sastrasinh's serde-cyclonedx.
-//! The working version and documentation URL do not imply a registry release.
+//! A standalone fork of Paul Sastrasinh's serde-cyclonedx, preserving its
+//! generated models and builders.
 //!
 //! This crate provides a type safe [serde](https://serde.rs/) compatible
 //! [CycloneDx](https://cyclonedx.org/) format. It is intended for use
 //! in Rust code which may need to read or write CycloneDx files.
 //!
-//! The planned [documentation location](https://docs.rs/cyclonedx-rs) will
-//! become available only after an approved publication.
+//! [API documentation](https://docs.rs/cyclonedx-rs) is built by docs.rs after
+//! registry publication.
 //!
 //! serde is a popular serialization framework for Rust. More information can be
 //! found on the official repository:

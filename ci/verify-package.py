@@ -8,7 +8,8 @@ import tomllib
 root = pathlib.Path(__file__).resolve().parents[1]
 manifest = tomllib.loads((root / "Cargo.toml").read_text())
 package = manifest["package"]
-assert package["publish"] is False, "preparation must remain unpublished"
+assert package["name"] == "cyclonedx-rs", "unexpected release package name"
+assert package.get("publish") == ["crates-io"], "release must target crates.io only"
 for license_file in ["LICENSE", "LICENSE-APACHE", "NOTICE"]:
     path = root / license_file
     assert path.is_file() and not path.is_symlink(), (
@@ -16,9 +17,10 @@ for license_file in ["LICENSE", "LICENSE-APACHE", "NOTICE"]:
     )
 name = f'{package["name"]}-{package["version"]}'
 archive = root / "target" / "package" / f"{name}.crate"
-required = {"Cargo.toml", "Cargo.lock", "build.rs", "src/lib.rs",
+required = {"Cargo.toml", "Cargo.toml.orig", "Cargo.lock", "build.rs", "src/lib.rs",
             "src/cyclonedx.rs", "LICENSE", "LICENSE-APACHE", "NOTICE",
-            "README.md", "PROVENANCE.md", "tests/cyclonedx_1_7_test.rs",
+            "README.md", "PROVENANCE.md", "RELEASING.md", "CHANGELOG.md",
+            "tests/cyclonedx_1_7_test.rs",
             "tests/existing_versions.rs"}
 required.update(str(p.relative_to(root)) for p in (root / "schemas").glob("*.json"))
 required.update(str(p.relative_to(root)) for p in (root / "tests" / "fixtures").glob("*.json"))
@@ -33,6 +35,7 @@ with tarfile.open(archive) as tar:
         assert not path.endswith(".profraw"), path
     for path in sorted(required - {"Cargo.toml"}):
         data = tar.extractfile(name + "/" + path).read()
-        assert data == (root / path).read_bytes(), path
+        source = "Cargo.toml" if path == "Cargo.toml.orig" else path
+        assert data == (root / source).read_bytes(), path
         print(hashlib.sha256(data).hexdigest(), path)
 print(f"PASS {archive}: {len(contents)} files, all required inputs present")

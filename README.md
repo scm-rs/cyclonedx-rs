@@ -12,13 +12,14 @@ extraction history.
 
 Minimum supported Rust version: **1.91.0**. CI also checks stable Rust.
 
-## Status
+## Releases
 
-**Unpublished; available for review.** Publishing remains disabled
-(`publish = false`), and **0.10.1 is a working version**, not an approved release.
-An upstream release remains the preferred production route. The
-[docs.rs location](https://docs.rs/cyclonedx-rs) is planned for a future approved
-publication; no documentation release is available there yet.
+The first fork release version is **0.10.1**, under the registry package name
+[`cyclonedx-rs`](https://crates.io/crates/cyclonedx-rs). After publication,
+[docs.rs](https://docs.rs/cyclonedx-rs) builds the API documentation.
+
+Publishing is manual and restricted to crates.io. See [RELEASING.md](RELEASING.md)
+for the review, validation and publication checklist.
 
 ## Models and usage
 
@@ -61,9 +62,14 @@ Successful deserialization also does not establish downstream persistence.
 
 The inherited cryptography definitions match specification master at
 `1ce97b2a7b8cf2429da248560d2aa671c6bce74a`, not the older tag `1.7`.
-For example, tag `1.7` includes `KMAC`, while these bindings reject that
-algorithm family. This inherited schema-baseline question needs maintainer
-review before release; the schemas were not silently updated. See
+Tag `1.7` includes a standalone `KMAC` family, while these bindings reject
+`algorithmFamily: "KMAC"`. The upstream specification intentionally removed
+that redundant family in [#844](https://github.com/CycloneDX/specification/pull/844),
+resolving [#824](https://github.com/CycloneDX/specification/issues/824).
+
+The first release keeps the inherited schema baseline unchanged. Compatibility
+with the older standalone KMAC representation is deferred to a follow-up;
+this does not mean KMAC was removed as a cryptographic construction. See
 [PROVENANCE.md](PROVENANCE.md#schema-baseline-review).
 
 Tests include upstream's four 1.7 regressions (citations, `isExternal`, crypto
@@ -79,6 +85,7 @@ cargo clippy --all-targets --all-features --locked -- -D warnings
 cargo fmt --all -- --check
 cargo package --list --locked
 cargo package --locked
+python3 -m unittest discover -s ci -p 'test_*.py'
 python3 ci/verify-package.py
 cargo +1.91.0 check --all-targets --all-features --locked
 cargo +1.91.0 test --all-features --locked
@@ -87,9 +94,9 @@ cargo +1.91.0 test --all-features --locked
 For uncommitted local changes, both package commands require `--allow-dirty`;
 archive verification must remain enabled (never use `--no-verify`).
 
-Preparation CI has read-only permissions and only build/test/lint/package jobs,
-with stable/MSRV coverage on Linux, macOS and Windows. No publishing workflow,
-tokens, OIDC, tags, or release jobs are enabled. The organization shared CI was
+CI has read-only permissions and only build/test/lint/package jobs, with
+stable/MSRV coverage on Linux, macOS and Windows. Publishing is a separate
+manual step; no publishing workflow, tokens, OIDC or release jobs are enabled. The organization shared CI was
 inspected, but its implicit registry semver baseline cannot exist for this new
 package identity. Only that comparison is deferred for the first release;
 all normal checks remain. Before adopting shared CI, establish a published

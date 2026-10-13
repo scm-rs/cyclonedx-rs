@@ -26,9 +26,9 @@ verification also rejects license/notice symlinks.
 
 The library retains upstream author credit and history. It was initially
 cloned from a local extraction workspace; the review repository is now
-https://github.com/scm-rs/cyclonedx-rs. The docs.rs URL remains a planned
-publication destination. This is not an official handover, and the upstream
-release remains preferred.
+https://github.com/scm-rs/cyclonedx-rs. API documentation is built by docs.rs
+after publication. This is not an official handover; upstream serde-cyclonedx
+remains a separately maintained and versioned package.
 
 ## Licensing provenance
 
@@ -49,18 +49,26 @@ The vendored cryptography definitions are semantically equal to specification
 master at `1ce97b2a7b8cf2429da248560d2aa671c6bce74a`, including its omission
 of `KMAC`, which appears in tag `1.7`. A separate compatibility probe confirmed
 that the inherited generated enum rejects `algorithmFamily: "KMAC"`.
-Maintainers should reconcile the intended baseline and decide whether a narrowly
-reviewed upstream-compatible fix is needed; no schema/generator change was made
-to hide this limitation. Binding and round-trip tests are not an authoritative
-JSON Schema conformance suite.
+The specification project tracked the ambiguity in
+[#824](https://github.com/CycloneDX/specification/issues/824) and intentionally
+removed the redundant family in merged
+[#844](https://github.com/CycloneDX/specification/pull/844), folding the KMAC-based
+KDF into SP800-108. This does not remove KMAC as a cryptographic construction.
 
-## Release decisions deliberately pending
+The first fork release preserves the inherited definitions without schema or
+generator changes. Accepting the older standalone KMAC representation is deferred
+to a follow-up. Binding and round-trip tests are not an authoritative JSON Schema
+conformance suite, and this release does not claim complete equivalence to tag
+`1.7` or downstream persistence of every field.
 
-The working 0.10.1 and `publish = false` must not be treated as publication
-approval. Name availability, first release version, ownership, exact source
-commits, downstream release line and type-identity semver review, registry
-conversion, database/schema/QA gates, and release schedule/freeze require
-maintainer approval. Only the library review commit and preparation-branch push
-have been authorized. Crate publication, release tags, merges, PR creation,
-downstream pushes, issue comments, and credentials/ownership changes are not
-authorized by that review-repository approval.
+## First fork release
+
+The first release version is 0.10.1 and its registry target is restricted to
+crates.io. Release preparation changes metadata, documentation and package checks;
+the generated API inputs, explicit Serde derive dependency, licenses and attribution
+remain intact. See [RELEASING.md](RELEASING.md) for the manual release process.
+
+Publication, release tags, repository administration and crate ownership changes
+are separate operator actions, not side effects of preparing or running CI.
+Downstream registry conversion and walker release/version decisions remain
+separate from publishing this library.
