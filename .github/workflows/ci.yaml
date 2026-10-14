@@ -16,21 +16,56 @@ permissions:
   contents: read
 
 jobs:
-  common:
-    uses: scm-rs/shared-workflows/.github/workflows/ci.yaml@main
-    with:
-      # The renamed package has no same-identity registry baseline yet.
-      preflight_semver_exclude: cyclonedx-rs
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: webiny/action-conventional-commits@v1.4.2
+      - uses: obi1kenobi/cargo-semver-checks-action@v2
+        if: github.event_name == 'pull_request'
+        with:
+          # The package has no registry release yet; use the same-identity PR base.
+          baseline-rev: ${{ github.event.pull_request.base.sha }}
+          release-type: patch
+      - name: Check formatting
+        run: cargo fmt --check
+
+  check:
+    needs:
+      - preflight
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - macos-15
+          - windows-2025
+        rust:
+          - stable
+          - "1.91.0"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Swatinem/rust-cache@v2
+      - name: Install toolchain
+        run: rustup toolchain install ${{ matrix.rust }} --profile minimal --component clippy,rustfmt
+      - run: cargo +${{ matrix.rust }} check --all-targets --all-features --locked
+      - run: cargo +${{ matrix.rust }} test --all-features --locked
+      - run: cargo +${{ matrix.rust }} clippy --all-targets --all-features --locked -- -D warnings
+      - run: cargo +${{ matrix.rust }} fmt --all -- --check
 
   ci:
     runs-on: ubuntu-latest
     needs:
-      - common
+      - preflight
+      - check
     if: always()
     steps:
       - name: Success
-        if: ${{ needs.common.result == 'success' }}
+        if: ${{ needs.preflight.result == 'success' && needs.check.result == 'success' }}
         run: exit 0
       - name: Failure
-        if: ${{ needs.common.result != 'success' }}
+        if: ${{ needs.preflight.result != 'success' || needs.check.result != 'success' }}
         run: exit 1

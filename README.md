@@ -81,10 +81,11 @@ cargo test --all-features --locked
 cargo clippy --all-targets --all-features --locked -- -D warnings
 ```
 
-Shared CI runs formatting, tests, Clippy, and all-feature checks on stable and
-the declared MSRV across Linux, macOS, and Windows. Semver comparison is
-excluded for `cyclonedx-rs` until a same-package registry baseline exists; the
-original `serde-cyclonedx` package has a different Rust type identity.
+CI follows the SCM-RS preflight and platform-matrix checks: formatting, tests,
+Clippy, and all-feature checks on stable and the declared MSRV across Linux,
+macOS, and Windows. Until a registry baseline exists, PR semver checks compare
+against the target branch's same-identity `cyclonedx-rs` package, not the
+original `serde-cyclonedx` package.
 
 ## Licensing
 
