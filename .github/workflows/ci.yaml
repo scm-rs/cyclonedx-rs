@@ -2,41 +2,35 @@ name: CI
 
 on:
   push:
-    branches: [main, prepare/cyclonedx-rs]
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
+  workflow_call:
+  merge_group:
+    types:
+      - checks_requested
+  schedule:
+    - cron: "45 2 * * *"
 
 permissions:
   contents: read
 
-# No registry baseline exists for this renamed, unpublished package.
-# First-release semver comparison is deferred, not build/test/package checks.
-# Adopt shared CI after a same-identity baseline is agreed (see README).
 jobs:
-  check:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, macos-15, windows-2025]
-        rust: [stable, '1.91.0']
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v7
-      - name: Install toolchain
-        run: rustup toolchain install ${{ matrix.rust }} --profile minimal --component clippy,rustfmt
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo +${{ matrix.rust }} check --all-targets --all-features --locked
-      - run: cargo +${{ matrix.rust }} test --all-features --locked
-      - run: cargo +${{ matrix.rust }} clippy --all-targets --all-features --locked -- -D warnings
-      - run: cargo +${{ matrix.rust }} fmt --all -- --check
+  common:
+    uses: scm-rs/shared-workflows/.github/workflows/ci.yaml@main
+    with:
+      # The renamed package has no same-identity registry baseline yet.
+      preflight_semver_exclude: cyclonedx-rs
 
-  package:
-    runs-on: ubuntu-24.04
+  ci:
+    runs-on: ubuntu-latest
+    needs:
+      - common
+    if: always()
     steps:
-      - uses: actions/checkout@v7
-      - run: rustup toolchain install stable --profile minimal
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo +stable package --list --locked
-      - run: cargo +stable package --locked
-      - run: python3 -m unittest discover -s ci -p 'test_*.py'
-      - run: python3 ci/verify-package.py
+      - name: Success
+        if: ${{ needs.common.result == 'success' }}
+        run: exit 0
+      - name: Failure
+        if: ${{ needs.common.result != 'success' }}
+        run: exit 1

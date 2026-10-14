@@ -1,7 +1,6 @@
 [package]
 name = "cyclonedx-rs"
 version = "0.10.1"
-publish = ["crates-io"]
 rust-version = "1.91.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2021"
@@ -15,7 +14,7 @@ build = "build.rs"
 homepage = "https://github.com/scm-rs/cyclonedx-rs"
 documentation = "https://docs.rs/cyclonedx-rs"
 repository = "https://github.com/scm-rs/cyclonedx-rs"
-include = ["Cargo.toml", "Cargo.lock", "build.rs", "src/**", "schemas/**", "LICENSE", "LICENSE-APACHE", "NOTICE", "README.md", "PROVENANCE.md", "RELEASING.md", "CHANGELOG.md", "tests/**", ".rustfmt.toml"]
+include = ["Cargo.toml", "Cargo.lock", "build.rs", "src/**", "schemas/**", "LICENSE", "LICENSE-APACHE", "NOTICE", "README.md", "tests/**", ".rustfmt.toml"]
 
 [badges]
 github = { repository = "scm-rs/cyclonedx-rs" }
