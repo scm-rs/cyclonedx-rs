@@ -2,40 +2,70 @@ name: CI
 
 on:
   push:
-    branches: [main, prepare/cyclonedx-rs]
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
+  workflow_call:
+  merge_group:
+    types:
+      - checks_requested
+  schedule:
+    - cron: "45 2 * * *"
 
 permissions:
   contents: read
 
-# No registry baseline exists for this renamed, unpublished package.
-# First-release semver comparison is deferred, not build/test/package checks.
-# Adopt shared CI after a same-identity baseline is agreed (see README).
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: webiny/action-conventional-commits@v1.4.2
+      - uses: obi1kenobi/cargo-semver-checks-action@v2
+        if: github.event_name == 'pull_request'
+        with:
+          # The package has no registry release yet; use the same-identity PR base.
+          baseline-rev: ${{ github.event.pull_request.base.sha }}
+          release-type: patch
+      - name: Check formatting
+        run: cargo fmt --check
+
   check:
+    needs:
+      - preflight
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-15, windows-2025]
-        rust: [stable, '1.91.0']
+        os:
+          - ubuntu-24.04
+          - macos-15
+          - windows-2025
+        rust:
+          - stable
+          - "1.91.0"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+      - uses: Swatinem/rust-cache@v2
       - name: Install toolchain
         run: rustup toolchain install ${{ matrix.rust }} --profile minimal --component clippy,rustfmt
-      - uses: Swatinem/rust-cache@v2
       - run: cargo +${{ matrix.rust }} check --all-targets --all-features --locked
       - run: cargo +${{ matrix.rust }} test --all-features --locked
       - run: cargo +${{ matrix.rust }} clippy --all-targets --all-features --locked -- -D warnings
       - run: cargo +${{ matrix.rust }} fmt --all -- --check
 
-  package:
-    runs-on: ubuntu-24.04
+  ci:
+    runs-on: ubuntu-latest
+    needs:
+      - preflight
+      - check
+    if: always()
     steps:
-      - uses: actions/checkout@v7
-      - run: rustup toolchain install stable --profile minimal
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo +stable package --list --locked
-      - run: cargo +stable package --locked
-      - run: python3 ci/verify-package.py
+      - name: Success
+        if: ${{ needs.preflight.result == 'success' && needs.check.result == 'success' }}
+        run: exit 0
+      - name: Failure
+        if: ${{ needs.preflight.result != 'success' || needs.check.result != 'success' }}
+        run: exit 1

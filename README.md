@@ -7,18 +7,17 @@ Software Bills of Materials (SBOMs), supporting specification versions 1.4–1.7
 
 A standalone fork of **Paul Sastrasinh's
 [serde-cyclonedx](https://github.com/psastras/sbom-rs)**, preserving its generated
-APIs and upstream attribution. See [PROVENANCE.md](PROVENANCE.md) for the
-extraction history.
+APIs and upstream attribution.
 
 Minimum supported Rust version: **1.91.0**. CI also checks stable Rust.
 
-## Status
+## Releases
 
-**Unpublished; available for review.** Publishing remains disabled
-(`publish = false`), and **0.10.1 is a working version**, not an approved release.
-An upstream release remains the preferred production route. The
-[docs.rs location](https://docs.rs/cyclonedx-rs) is planned for a future approved
-publication; no documentation release is available there yet.
+Releases follow the [SCM-RS shared release workflow](https://github.com/scm-rs/shared-workflows).
+Pushing a version tag (`vX.Y.Z`) runs CI, generates release notes from
+Conventional Commits, creates a GitHub release, and publishes to crates.io. The
+tag version must match the package version. After publication,
+[docs.rs](https://docs.rs/cyclonedx-rs) builds the API documentation.
 
 ## Models and usage
 
@@ -59,43 +58,34 @@ validation**: constraints are not all enforced, unknown fields may be ignored,
 and unvendored SPDX/signature references retain upstream string aliases.
 Successful deserialization also does not establish downstream persistence.
 
-The inherited cryptography definitions match specification master at
-`1ce97b2a7b8cf2429da248560d2aa671c6bce74a`, not the older tag `1.7`.
-For example, tag `1.7` includes `KMAC`, while these bindings reject that
-algorithm family. This inherited schema-baseline question needs maintainer
-review before release; the schemas were not silently updated. See
-[PROVENANCE.md](PROVENANCE.md#schema-baseline-review).
+The vendored cryptography definitions follow the current upstream schema
+baseline, which differs from the older CycloneDX 1.7 tag. Documents using the
+legacy `algorithmFamily: "KMAC"` value are therefore rejected. The standalone
+family was intentionally removed in [CycloneDX specification #844](https://github.com/CycloneDX/specification/pull/844)
+(resolving [#824](https://github.com/CycloneDX/specification/issues/824)); this
+does not mean KMAC was removed as a cryptographic construction. Compatibility
+with the legacy representation is deferred to a follow-up.
 
 Tests include upstream's four 1.7 regressions (citations, `isExternal`, crypto
 enums, ML-KEM builders and `3DES`) and direct 1.4/1.5/1.6 compatibility tests.
 There is no CLI or SPDX library in this repository.
 
-## Local checks / CI
+## Local checks and CI
+
+Run the standard Rust checks locally:
 
 ```sh
+cargo fmt --check
 cargo check --all-targets --all-features --locked
 cargo test --all-features --locked
 cargo clippy --all-targets --all-features --locked -- -D warnings
-cargo fmt --all -- --check
-cargo package --list --locked
-cargo package --locked
-python3 ci/verify-package.py
-cargo +1.91.0 check --all-targets --all-features --locked
-cargo +1.91.0 test --all-features --locked
 ```
 
-For uncommitted local changes, both package commands require `--allow-dirty`;
-archive verification must remain enabled (never use `--no-verify`).
-
-Preparation CI has read-only permissions and only build/test/lint/package jobs,
-with stable/MSRV coverage on Linux, macOS and Windows. No publishing workflow,
-tokens, OIDC, tags, or release jobs are enabled. The organization shared CI was
-inspected, but its implicit registry semver baseline cannot exist for this new
-package identity. Only that comparison is deferred for the first release;
-all normal checks remain. Before adopting shared CI, establish a published
-baseline (or explicitly approved same-identity Git baseline) and review the
-original-to-fork public type identity change in downstreams. Do not compare
-against registry `serde-cyclonedx` as if it were the renamed package.
+CI follows the SCM-RS preflight and platform-matrix checks: formatting, tests,
+Clippy, and all-feature checks on stable and the declared MSRV across Linux,
+macOS, and Windows. Until a registry baseline exists, PR semver checks compare
+against the target branch's same-identity `cyclonedx-rs` package, not the
+original `serde-cyclonedx` package.
 
 ## Licensing
 
