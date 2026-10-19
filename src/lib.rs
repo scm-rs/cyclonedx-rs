@@ -27,6 +27,11 @@
 //! [cyclonedx::v_1_4], [cyclonedx::v_1_5], [cyclonedx::v_1_6] and
 //! [cyclonedx::v_1_7].
 //!
+//! Models are generated from JSON schemas vendored from the official CycloneDX
+//! specification release 1.7.2. This is not a complete JSON Schema validator.
+//! See [schema sources and updates](https://github.com/scm-rs/cyclonedx-rs/blob/main/schemas/README.md)
+//! for the pinned baseline and compatibility policy.
+//!
 //! ## Usage
 //!
 //! For most cases, simply use the root [cyclonedx::v_1_4::CycloneDx] struct with [serde] to read

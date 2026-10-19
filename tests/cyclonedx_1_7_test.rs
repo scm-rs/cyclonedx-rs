@@ -150,3 +150,28 @@ fn test_algorithm_family_with_numeric_start() -> Result<()> {
 
   Ok(())
 }
+
+// The corrected registry represents KMAC MACs under SHA-3 and the KMAC-based
+// KDF under SP800-108. These are family identifiers, not algorithm variants.
+#[test]
+fn test_corrected_kmac_families_round_trip() -> Result<()> {
+  for (name, expected) in [
+    ("SHA-3", AlgorithmFamiliesEnum::Sha3),
+    ("SP800-108", AlgorithmFamiliesEnum::Sp800108),
+  ] {
+    let family: AlgorithmFamiliesEnum =
+      serde_json::from_value(serde_json::json!(name))?;
+
+    assert_eq!(family, expected);
+    assert_eq!(serde_json::to_value(&family)?, serde_json::json!(name));
+  }
+
+  Ok(())
+}
+
+// Specification #844 intentionally removed this standalone family; accepting
+// it would require a separate legacy-compatibility and serialization policy.
+#[test]
+fn test_legacy_standalone_kmac_family_is_rejected() {
+  assert!(serde_json::from_str::<AlgorithmFamiliesEnum>("\"KMAC\"").is_err());
+}

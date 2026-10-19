@@ -3,7 +3,8 @@
 # cyclonedx-rs
 
 Serde-compatible Rust models and builders for reading and writing CycloneDX
-Software Bills of Materials (SBOMs), supporting specification versions 1.4–1.7.
+Software Bills of Materials (SBOMs), supporting specification versions 1.4–1.7
+using JSON schemas from the official specification release **1.7.2**.
 
 A standalone fork of **Paul Sastrasinh's
 [serde-cyclonedx](https://github.com/psastras/sbom-rs)**, preserving its generated
@@ -58,17 +59,21 @@ validation**: constraints are not all enforced, unknown fields may be ignored,
 and unvendored SPDX/signature references retain upstream string aliases.
 Successful deserialization also does not establish downstream persistence.
 
-The vendored cryptography definitions follow the current upstream schema
-baseline, which differs from the older CycloneDX 1.7 tag. Documents using the
-legacy `algorithmFamily: "KMAC"` value are therefore rejected. The standalone
-family was intentionally removed in [CycloneDX specification #844](https://github.com/CycloneDX/specification/pull/844)
-(resolving [#824](https://github.com/CycloneDX/specification/issues/824)); this
-does not mean KMAC was removed as a cryptographic construction. Compatibility
-with the legacy representation is deferred to a follow-up.
+All five vendored JSON schemas are exact copies from specification release
+1.7.2. Maintenance-release numbers identify schema snapshots; 1.7 documents
+still use `"specVersion": "1.7"`. See [Schema sources and updates](schemas/README.md)
+for the pinned source commit and update process.
+
+The legacy standalone `algorithmFamily: "KMAC"` value from the original 1.7 tag
+is rejected, following the correction included in the maintenance releases
+([specification #844](https://github.com/CycloneDX/specification/pull/844)).
+KMAC MAC variants belong to `SHA-3`; the KMAC-based KDF belongs to `SP800-108`.
+Legacy-family compatibility and silent normalization are not provided.
 
 Tests include upstream's four 1.7 regressions (citations, `isExternal`, crypto
-enums, ML-KEM builders and `3DES`) and direct 1.4/1.5/1.6 compatibility tests.
-There is no CLI or SPDX library in this repository.
+enums, ML-KEM builders and `3DES`), explicit cryptography-family compatibility
+checks, and direct 1.4/1.5/1.6 compatibility tests. There is no CLI or SPDX
+library in this repository.
 
 ## Local checks and CI
 
@@ -91,4 +96,4 @@ original `serde-cyclonedx` package.
 
 Library source: MIT, **Copyright (c) 2023 Paul Sastrasinh**; see [LICENSE](LICENSE).
 Vendored CycloneDX schemas: Apache-2.0, OWASP Foundation; see
-[LICENSE-APACHE](LICENSE-APACHE) and [NOTICE](NOTICE). Schema bytes are unchanged.
+[LICENSE-APACHE](LICENSE-APACHE) and [NOTICE](NOTICE).
