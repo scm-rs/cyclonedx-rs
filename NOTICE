@@ -1,8 +1,10 @@
-cyclonedx-rs is a standalone preparation fork of serde-cyclonedx from
+cyclonedx-rs is a standalone fork of serde-cyclonedx from
 https://github.com/psastras/sbom-rs at 9f1b93aea2e55929ddb2140014432db23afe25fb.
 Library source: Copyright (c) 2023 Paul Sastrasinh, MIT License (LICENSE).
 
-Vendored CycloneDX specification inputs:
+Vendored CycloneDX specification inputs from release 1.7.2,
+commit 349314a9d7671d7d2ca5b711a725f49a73979da6:
+https://github.com/CycloneDX/specification/tree/349314a9d7671d7d2ca5b711a725f49a73979da6/schema
   schemas/cyclonedx_1_4.json
   schemas/cyclonedx_1_5.json
   schemas/cyclonedx_1_6.json
@@ -14,5 +16,6 @@ https://github.com/CycloneDX/specification
 Licensed under the Apache License, Version 2.0 (LICENSE-APACHE).
 The BOM schemas carry their own Apache-2.0 license comments; the complete
 specification license also covers the cryptography definitions.
-These vendored files are byte-for-byte unchanged from the extraction source.
+These vendored files are byte-for-byte unchanged from that specification
+release; the BOM schema filenames are mapped as documented in schemas/README.md.
 This attribution notice is not a claim of ownership or official endorsement.
