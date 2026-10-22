@@ -1,0 +1,8 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "ignorePaths": ["schemas/**", "tests/fixtures/**"],
+  "prBodyNotes": [
+    "Keep the tracked Cargo.lock consistent with dependency changes and require the existing locked MSRV/stable CI.",
+    "Build dependencies generate public Rust models: review generated API and serialization compatibility across CycloneDX 1.4–1.7. Vendored schemas and fixtures are maintained separately, not updated by this Cargo-only configuration."
+  ]
+}

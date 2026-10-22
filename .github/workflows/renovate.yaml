@@ -1,0 +1,22 @@
+name: Renovate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+  pull_request:
+    paths:
+      - renovate.json
+      - .github/workflows/renovate.yaml
+
+permissions: {}
+
+jobs:
+  renovate:
+    uses: scm-rs/shared-workflows/.github/workflows/renovate.yaml@main
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      statuses: write
+      checks: read
