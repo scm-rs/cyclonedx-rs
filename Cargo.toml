@@ -34,9 +34,9 @@ pretty_assertions = "1.4.1"
 
 [build-dependencies]
 anyhow = "1.0.102"
-prettyplease = "0.2.36"
+prettyplease = "0.3.0"
 proc-macro2 = "1.0.106"
 quote = "1.0.45"
 schemafy_lib = "0.6.0"
 serde_json = "1.0.150"
-syn = "2.0.117"
+syn = "3.0.0"
